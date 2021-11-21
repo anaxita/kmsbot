@@ -1,0 +1,7 @@
+/.idea
+/logs
+/build
+*config.yml
+*.db
+migrate-cli
+Makefile
