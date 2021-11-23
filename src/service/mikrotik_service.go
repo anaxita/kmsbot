@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-routeros/routeros"
-	"net"
 )
 
 type Mikrotik struct {
@@ -29,14 +28,14 @@ func NewMikrotik(routerAddr, routerLogin, routerPassword string) (*Mikrotik, err
 	return router, nil
 }
 
-func (rc *Mikrotik) AddIP(ip net.IP, comment string) error {
+func (rc *Mikrotik) AddIP(ip string, comment string) error {
 	conn, err := rc.dial()
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
 
-	_, err = conn.Run("/ip/firewall/address-list/add", "=list=WL", "=address="+ip.String(), "=comment=\""+comment+"\"")
+	_, err = conn.Run("/ip/firewall/address-list/add", "=list=WL", "=address="+ip, "=comment=\""+comment+"\"")
 	if err != nil {
 		return err
 	}
@@ -44,25 +43,25 @@ func (rc *Mikrotik) AddIP(ip net.IP, comment string) error {
 	return nil
 }
 
-func (rc *Mikrotik) RemoveIP(ip net.IP) error {
+func (rc *Mikrotik) RemoveIP(ip string) error {
 	conn, err := rc.dial()
 	if err != nil {
 		return err
 	}
 	defer conn.Close()
 
-	findIP, err := conn.Run("/ip/firewall/address-list/print", fmt.Sprintf("address=%s", ip.String()), ".proplist=.id")
+	findIP, err := conn.Run("/ip/firewall/address-list/print", fmt.Sprintf("address=%s", ip), ".proplist=.id")
 	if err != nil {
 		return err
 	}
 
 	if len(findIP.Re) <= 0 {
-		return errors.New("ip is not found")
+		return errors.New("IP is not found")
 	}
 
 	ipID, ok := findIP.Re[0].Map[".id"]
 	if !ok {
-		return errors.New("ip is not found")
+		return errors.New("IP is not found")
 	}
 
 	_, err = conn.Run("/ip/firewall/address-list/remove", "=.id="+ipID)

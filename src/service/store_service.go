@@ -12,25 +12,21 @@ const (
 	RoleAdmin
 )
 
-type Store struct {
-	db *dbr.Connection
+type Message interface {
+	Data() string
 }
 
-func NewStore(dbname, user, password string) (*Store, error) {
-	conn, err := dbr.Open("sqlite3", fmt.Sprintf("file:%s.db?_loc=auto&_auth&_auth_user=%s&_auth_pass=%s&_auth_crypt=sha512", dbname, user, password), nil)
-	if err != nil {
-		return nil, err
-	}
+type Store struct {
+	db       *dbr.Connection
+	Messages map[int]Message
+}
 
-	if err = conn.Ping(); err != nil {
-		return nil, err
-	}
+type IPMessage struct {
+	IP string
+}
 
-	conn.SetConnMaxLifetime(time.Minute * 3)
-	conn.SetMaxOpenConns(10)
-	conn.SetMaxIdleConns(10)
-
-	return &Store{db: conn}, nil
+func (i *IPMessage) Data() string {
+	return i.IP
 }
 
 type User struct {
@@ -48,6 +44,23 @@ type Chat struct {
 	ID     int64  `db:"id"`
 	ChatID int64  `db:"chat_id"`
 	Role   int    `db:"role"`
+}
+
+func NewStore(dbname, user, password string) (*Store, error) {
+	conn, err := dbr.Open("sqlite3", fmt.Sprintf("file:%s.db?_loc=auto&_auth&_auth_user=%s&_auth_pass=%s&_auth_crypt=sha512", dbname, user, password), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = conn.Ping(); err != nil {
+		return nil, err
+	}
+
+	conn.SetConnMaxLifetime(time.Minute * 3)
+	conn.SetMaxOpenConns(10)
+	conn.SetMaxIdleConns(10)
+
+	return &Store{db: conn, Messages: make(map[int]Message)}, nil
 }
 
 func (s *Store) CreateUser(u User) (int64, error) {
@@ -163,4 +176,19 @@ func (s *Store) DeleteChat(id int64) error {
 	}
 
 	return nil
+}
+
+func (s *Store) ChatByID(chatID int64) (*Chat, error) {
+	var chat *Chat
+
+	_, err := s.db.NewSession(nil).
+		Select("*").
+		From("chats").
+		Where(dbr.Eq("id", chatID)).
+		Load(&chat)
+	if err != nil {
+		return nil, err
+	}
+
+	return chat, nil
 }

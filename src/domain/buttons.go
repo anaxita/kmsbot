@@ -17,7 +17,7 @@ var startAdminKeyboard = tgbotapi.NewInlineKeyboardMarkup(
 var wlAdminKeyboard = tgbotapi.NewInlineKeyboardMarkup(
 	tgbotapi.NewInlineKeyboardRow(
 		tgbotapi.NewInlineKeyboardButtonData("Добавить IP", btnAddIP),
-		tgbotapi.NewInlineKeyboardButtonData("Удалить IP", btnAddIP),
+		tgbotapi.NewInlineKeyboardButtonData("Удалить IP", btnRemoveIP),
 	),
 	tgbotapi.NewInlineKeyboardRow(
 		tgbotapi.NewInlineKeyboardButtonData("Назад", btnToStart),
@@ -52,7 +52,7 @@ var adminsListAdminKeyboard = tgbotapi.NewInlineKeyboardMarkup(
 
 var askToAddIPClientKeyboard = tgbotapi.NewInlineKeyboardMarkup(
 	tgbotapi.NewInlineKeyboardRow(
-		tgbotapi.NewInlineKeyboardButtonData("Да", btnAddIP),
-		tgbotapi.NewInlineKeyboardButtonData("Нет", btnDeclinedAddIp),
+		tgbotapi.NewInlineKeyboardButtonData("Да", btnAcceptAddIP),
+		tgbotapi.NewInlineKeyboardButtonData("Нет", btnDeclinedAddIP),
 	),
 )
