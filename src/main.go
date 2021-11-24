@@ -5,6 +5,9 @@ import (
 	"kmsbot/domain"
 	"kmsbot/service"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 type user struct {
@@ -12,6 +15,9 @@ type user struct {
 }
 
 func main() {
+	shutdown := make(chan os.Signal)
+	signal.Notify(shutdown, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
 	config, err := bootstrap.New()
 	if err != nil {
 		log.Fatalln("fatal", err)
@@ -33,6 +39,7 @@ func main() {
 	}
 
 	core := domain.NewCore(botService, storeService, mikrotikService)
-
 	core.Start()
+
+	<-shutdown
 }

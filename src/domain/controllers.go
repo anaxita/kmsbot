@@ -2,6 +2,7 @@ package domain
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"kmsbot/service"
 	"log"
 )
 
@@ -91,6 +92,52 @@ func (c *Core) commandController(update tgbotapi.Update) {
 func (c *Core) messageController(update tgbotapi.Update) {
 	var text = update.Message.Text
 	ip, isIp := isContainIP(text)
+
+	chat, err := c.store.ChatByChatID(update.Message.Chat.ID)
+	if err != nil {
+		log.Println("Ошибка запроса чата из БД", err)
+		return
+	}
+
+	if chat == nil &&
+		len(update.Message.NewChatMembers) > 0 &&
+		(update.Message.From.UserName == "anaxita" ||
+			update.Message.From.UserName == "Mishagl") {
+
+		log.Println("Чат не найден в БД")
+
+		chat = &service.Chat{
+			Title:  update.Message.Chat.Title,
+			ChatID: update.Message.Chat.ID,
+			Role:   service.RoleClient,
+		}
+
+		log.Println("Добавляю новый чат в БД")
+
+		err := c.store.CreateChat(*chat)
+		if err != nil {
+			log.Println("Ошибка добавления чата в БД", err)
+
+			return
+		}
+	}
+
+	if chat == nil {
+		log.Println("Чата нету в БД, обработка сообщений отключена")
+
+		msg := tgbotapi.LeaveChatConfig{
+			ChatID: update.Message.Chat.ID,
+		}
+
+		log.Println("Покидаю данный чат")
+
+		_, err := c.bot.Request(msg)
+		if err != nil {
+			log.Println("Ошибка выхода из чата", err)
+		}
+
+		return
+	}
 
 	switch {
 	default:

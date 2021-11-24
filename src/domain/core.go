@@ -32,6 +32,10 @@ func (c *Core) Start() {
 			continue
 		}
 
+		if update.Message.Chat.Type == "private" {
+			return
+		}
+
 		if update.Message.IsCommand() {
 			log.Println("[INFO] Got a command")
 

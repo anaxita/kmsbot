@@ -126,7 +126,7 @@ func (s *Store) DeleteUser(id int64) error {
 func (s *Store) CreateChat(c Chat) error {
 	_, err := s.db.NewSession(nil).
 		InsertInto("chats").
-		Columns("chat_id, role", "title").
+		Columns("chat_id", "role", "title").
 		Values(c.ChatID, c.Role, c.Title).
 		Exec()
 	if err != nil {
@@ -178,13 +178,13 @@ func (s *Store) DeleteChat(id int64) error {
 	return nil
 }
 
-func (s *Store) ChatByID(chatID int64) (*Chat, error) {
+func (s *Store) ChatByChatID(chatID int64) (*Chat, error) {
 	var chat *Chat
 
 	_, err := s.db.NewSession(nil).
 		Select("*").
 		From("chats").
-		Where(dbr.Eq("id", chatID)).
+		Where(dbr.Eq("chat_id", chatID)).
 		Load(&chat)
 	if err != nil {
 		return nil, err

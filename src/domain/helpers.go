@@ -18,7 +18,7 @@ func (c *Core) sendNotification(text string) {
 }
 
 func (c *Core) isAdminChat(chatID int64) bool {
-	chat, err := c.store.ChatByID(chatID)
+	chat, err := c.store.ChatByChatID(chatID)
 	if err != nil {
 		log.Println("[ERROR] get chat by id", err)
 		return false
