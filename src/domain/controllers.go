@@ -56,10 +56,10 @@ func (c *Core) callbackController(callbackQuery *tgbotapi.CallbackQuery) {
 
 	switch data {
 	default:
-		log.Println("unknown client callback data ", data)
+		log.Println("unknown client callback data", data)
 	case btnDeclinedAddIP:
 		c.callbackDeclineAddIPHandler(callbackQuery)
-	case btnAddIP:
+	case btnAcceptAddIP:
 		c.callbackAddIPHandler(callbackQuery)
 	}
 
