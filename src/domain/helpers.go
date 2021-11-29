@@ -50,8 +50,10 @@ func isContainIpNet(text string) (string, bool) {
 	for _, s := range split {
 		_, ipNetwork, err := net.ParseCIDR(s)
 		if err != nil {
-			return ipNetwork.String(), true
+			continue
 		}
+
+		return ipNetwork.String(), true
 	}
 
 	return "", false

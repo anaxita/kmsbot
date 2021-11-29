@@ -19,6 +19,7 @@ func (c *Core) Start() {
 	updates := c.bot.GetUpdatesChan(c.bot.Config)
 
 	for update := range updates {
+
 		if update.CallbackQuery != nil {
 			log.Println("[INFO] Got a callback")
 			c.callbackController(update.CallbackQuery)

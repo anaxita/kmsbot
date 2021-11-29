@@ -39,14 +39,15 @@ func (c *Core) callbackController(callbackQuery *tgbotapi.CallbackQuery) {
 			log.Println("unknown admin callback data", data)
 		case btnToStart:
 			c.callbackToStartHandler(callbackQuery)
-		case btnAcceptAddIP:
-			c.callbackAddIPHandler(callbackQuery)
 		case btnMikrotik:
 			c.callbackToMikrotikHandler(callbackQuery)
 		case btnToChatsList:
 			c.callbackToChatsListHandler(callbackQuery)
 		case btnToAdminsList:
 			c.callbackToAdminsListHandler(callbackQuery)
+
+		case btnAcceptAddIP:
+			c.callbackAddIPHandler(callbackQuery)
 		case btnDeclinedAddIP:
 			c.callbackDeclineAddIPHandler(callbackQuery)
 		}
@@ -90,9 +91,6 @@ func (c *Core) commandController(update tgbotapi.Update) {
 }
 
 func (c *Core) messageController(update tgbotapi.Update) {
-	var text = update.Message.Text
-	ip, isIp := isContainIP(text)
-
 	chat, err := c.store.ChatByChatID(update.Message.Chat.ID)
 	if err != nil {
 		log.Println("Ошибка запроса чата из БД", err)
@@ -134,6 +132,24 @@ func (c *Core) messageController(update tgbotapi.Update) {
 		_, err := c.bot.Request(msg)
 		if err != nil {
 			log.Println("Ошибка выхода из чата", err)
+		}
+
+		return
+	}
+
+	var text = update.Message.Text
+	ip, isIp := isContainIP(text)
+	ipNet, isNet := isContainIpNet(text)
+
+	isAdminChat := c.isAdminChat(chat.ChatID)
+	if isAdminChat {
+		switch {
+		default:
+			log.Printf("[MESSAGE] %#v\n", update.Message.NewChatMembers)
+		case isIp:
+			c.AskToAddIPMessageHandler(update, ip)
+		case isNet:
+			c.AskToAddIPMessageHandler(update, ipNet)
 		}
 
 		return
