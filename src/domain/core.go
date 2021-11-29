@@ -27,6 +27,11 @@ func (c *Core) Start() {
 			continue
 		}
 
+		if update.MyChatMember != nil {
+			c.eventController(update)
+
+			continue
+		}
 		if update.Message == nil {
 			log.Println("[INFO] Got a nil message")
 

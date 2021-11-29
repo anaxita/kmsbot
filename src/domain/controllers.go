@@ -91,22 +91,52 @@ func (c *Core) commandController(update tgbotapi.Update) {
 }
 
 func (c *Core) messageController(update tgbotapi.Update) {
-	chat, err := c.store.ChatByChatID(update.Message.Chat.ID)
+	var text = update.Message.Text
+	ip, isIp := isContainIP(text)
+	ipNet, isNet := isContainIpNet(text)
+
+	isAdminChat := c.isAdminChat(update.Message.Chat.ID)
+
+	if isAdminChat {
+		switch {
+		default:
+			log.Printf("[MESSAGE] %#v\n", update.Message.NewChatMembers)
+		case isIp:
+			c.AskToAddIPMessageHandler(update, ip)
+		case isNet:
+			c.AskToAddIPMessageHandler(update, ipNet)
+		}
+
+		return
+	}
+
+	switch {
+	default:
+		log.Printf("[MESSAGE] %s", update.Message.Text)
+	case len(update.Message.NewChatMembers) > 0:
+		c.SendGreetingMessageHandler(update)
+	case isIp:
+		c.AskToAddIPMessageHandler(update, ip)
+	}
+}
+
+func (c *Core) eventController(update tgbotapi.Update) {
+	chat, err := c.store.ChatByChatID(update.MyChatMember.Chat.ID)
 	if err != nil {
 		log.Println("Ошибка запроса чата из БД", err)
 		return
 	}
 
 	if chat == nil &&
-		len(update.Message.NewChatMembers) > 0 &&
-		(update.Message.From.UserName == "anaxita" ||
-			update.Message.From.UserName == "Mishagl") {
+		update.ChatMember.NewChatMember.Status == "member" &&
+		(update.ChatMember.From.UserName == "anaxita" ||
+			update.ChatMember.From.UserName == "Mishagl") {
 
 		log.Println("Чат не найден в БД")
 
 		chat = &service.Chat{
-			Title:  update.Message.Chat.Title,
-			ChatID: update.Message.Chat.ID,
+			Title:  update.ChatMember.Chat.Title,
+			ChatID: update.ChatMember.Chat.ID,
 			Role:   service.RoleClient,
 		}
 
@@ -124,7 +154,7 @@ func (c *Core) messageController(update tgbotapi.Update) {
 		log.Println("Чата нету в БД, обработка сообщений отключена")
 
 		msg := tgbotapi.LeaveChatConfig{
-			ChatID: update.Message.Chat.ID,
+			ChatID: update.ChatMember.Chat.ID,
 		}
 
 		log.Println("Покидаю данный чат")
@@ -135,32 +165,5 @@ func (c *Core) messageController(update tgbotapi.Update) {
 		}
 
 		return
-	}
-
-	var text = update.Message.Text
-	ip, isIp := isContainIP(text)
-	ipNet, isNet := isContainIpNet(text)
-
-	isAdminChat := c.isAdminChat(chat.ChatID)
-	if isAdminChat {
-		switch {
-		default:
-			log.Printf("[MESSAGE] %#v\n", update.Message.NewChatMembers)
-		case isIp:
-			c.AskToAddIPMessageHandler(update, ip)
-		case isNet:
-			c.AskToAddIPMessageHandler(update, ipNet)
-		}
-
-		return
-	}
-
-	switch {
-	default:
-		log.Printf("[MESSAGE] %#v\n", update.Message.NewChatMembers)
-	case len(update.Message.NewChatMembers) > 0:
-		c.SendGreetingMessageHandler(update)
-	case isIp:
-		c.AskToAddIPMessageHandler(update, ip)
 	}
 }
