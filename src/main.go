@@ -7,6 +7,7 @@ import (
 	"kmsbot/rest"
 	"kmsbot/service"
 	"log"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -41,19 +42,22 @@ func main() {
 	}
 
 	core := domain.NewCore(botService, storeService, mikrotikService)
+	go core.Start()
 
 	srv := rest.NewServer(config.Server.Port, core)
-
-	go core.Start()
+	srv.SetRoutes()
 
 	go func() {
 		err := srv.ListenAndServe()
-		if err != nil {
-			log.Fatalln(err)
+		if err != nil && err != net.ErrClosed {
+			log.Fatalln("listen and serve", err)
 		}
 	}()
 
 	<-shutdown
 
-	srv.Shutdown(context.Background())
+	err = srv.Shutdown(context.Background())
+	if err != nil {
+		log.Println("srv shutdown", err)
+	}
 }

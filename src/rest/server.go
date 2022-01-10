@@ -21,7 +21,7 @@ func NewServer(port string, core *domain.Core) *Server {
 		core: core}
 }
 
-func (s *Server) setRoutes() {
+func (s *Server) SetRoutes() {
 	r := http.NewServeMux()
 	r.HandleFunc("/send", s.CorsHandler(s.SendHandler()))
 
