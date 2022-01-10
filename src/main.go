@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"kmsbot/bootstrap"
 	"kmsbot/domain"
+	"kmsbot/rest"
 	"kmsbot/service"
 	"log"
 	"os"
@@ -39,7 +41,19 @@ func main() {
 	}
 
 	core := domain.NewCore(botService, storeService, mikrotikService)
-	core.Start()
+
+	srv := rest.NewServer(config.Server.Port, core)
+
+	go core.Start()
+
+	go func() {
+		err := srv.ListenAndServe()
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}()
 
 	<-shutdown
+
+	srv.Shutdown(context.Background())
 }

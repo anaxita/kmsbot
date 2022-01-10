@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func (c *Core) sendNotification(text string) {
+func (c *Core) SendNotification(text string) {
 	msg := tgbotapi.NewMessage(kmsMailChatID, text)
 
 	_, err := c.bot.Send(msg)

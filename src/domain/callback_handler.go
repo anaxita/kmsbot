@@ -64,7 +64,7 @@ func (c *Core) callbackAddIPHandler(callbackQuery *tgbotapi.CallbackQuery) {
 				chatTitle = "Личные сообщения"
 			}
 
-			c.sendNotification(fmt.Sprintf("Chat: %s\nUser: @%s %s %s\nAction: Добавил IP %s", chatTitle, username, firstName, lastName, ip.Data()))
+			c.SendNotification(fmt.Sprintf("Chat: %s\nUser: @%s %s %s\nAction: Добавил IP %s", chatTitle, username, firstName, lastName, ip.Data()))
 		}
 	}
 

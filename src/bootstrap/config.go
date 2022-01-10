@@ -6,9 +6,14 @@ import (
 )
 
 type Config struct {
+	Server Server `yaml:"server"`
 	Bot    Bot    `yaml:"bot"`
 	Router Router `yaml:"router"`
 	DB     DB     `yaml:"database"`
+}
+
+type Server struct {
+	Port string `yaml:"port"`
 }
 
 type Bot struct {
