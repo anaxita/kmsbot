@@ -13,7 +13,8 @@ const (
 )
 
 type Message interface {
-	Data() string
+	IP4() string
+	MessageID() int
 }
 
 type Store struct {
@@ -22,11 +23,16 @@ type Store struct {
 }
 
 type IPMessage struct {
-	IP string
+	IP    string
+	MsgID int
 }
 
-func (i *IPMessage) Data() string {
+func (i *IPMessage) IP4() string {
 	return i.IP
+}
+
+func (i *IPMessage) MessageID() int {
+	return i.MsgID
 }
 
 type User struct {

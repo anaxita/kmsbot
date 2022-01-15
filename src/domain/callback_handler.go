@@ -48,23 +48,31 @@ func (c *Core) callbackAddIPHandler(callbackQuery *tgbotapi.CallbackQuery) {
 		return
 	}
 
-	ip, ok := c.store.Messages[msgID]
+	ipMessage, ok := c.store.Messages[msgID]
 	if !ok {
 		msg.Text = "Время истекло, введите заново IP"
 	}
 
+	msg.ReplyToMessageID = ipMessage.MessageID()
+
 	if ok {
+
 		comment := fmt.Sprintf("BOT %s | %s %s", chatTitle, firstName, lastName)
 
-		err := c.mikrotik.AddIP(ip.Data(), Translit(comment))
+		err := c.mikrotik.AddIP(ipMessage.IP4(), Translit(comment))
 		if err != nil {
-			msg.Text = "Ошибка добавления IP: " + err.Error()
+			if err.Error() == "from RouterOS device: failure: already have such entry" {
+				msg.Text = "Данный IP уже находится в белом списке."
+			} else {
+				msg.Text = "Ошибка добавления IP: " + err.Error()
+			}
+
 		} else {
 			if chatTitle == "" {
 				chatTitle = "Личные сообщения"
 			}
 
-			c.SendNotification(fmt.Sprintf("Chat: %s\nUser: @%s %s %s\nAction: Добавил IP %s", chatTitle, username, firstName, lastName, ip.Data()))
+			c.SendNotification(fmt.Sprintf("Chat: %s\nUser: @%s %s %s\nAction: Добавил IP %s", chatTitle, username, firstName, lastName, ipMessage.IP4()))
 		}
 	}
 

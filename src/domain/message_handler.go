@@ -14,13 +14,14 @@ func (c *Core) AskToAddIPMessageHandler(update tgbotapi.Update, ip string) {
 		ip))
 
 	msg.ReplyMarkup = askToAddIPClientKeyboard
+	msg.ReplyToMessageID = update.Message.MessageID
 
 	resp, err := c.bot.Send(msg)
 	if err != nil {
 		log.Println("[ERROR] send a message: ", err)
 	}
 
-	c.store.Messages[resp.MessageID] = &service.IPMessage{IP: ip}
+	c.store.Messages[resp.MessageID] = &service.IPMessage{IP: ip, MsgID: update.Message.MessageID}
 
 }
 
