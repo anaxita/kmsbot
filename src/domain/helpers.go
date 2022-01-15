@@ -43,7 +43,7 @@ func isContainIP(text string) (string, bool) {
 }
 
 func isContainIpNet(text string) (string, bool) {
-	regExp := regexp.MustCompile(`[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}`)
+	regExp := regexp.MustCompile(`[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\/[0-9]{1,3}`)
 	s := regExp.FindString(text)
 	_, ipNetwork, err := net.ParseCIDR(s)
 	if err != nil {
