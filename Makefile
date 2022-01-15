@@ -6,6 +6,8 @@ dbName = `yq e '.database.name' $(appConfigFile)`
 dbUser = `yq e '.database.user' $(appConfigFile)`
 dbPassword = `yq e '.database.password' $(appConfigFile)`
 
+build-prod:
+	cd src && GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -H windowsgui" -o kmsbot.exe .
 migrate-cli:
 	curl -L ${MIGRATE_TOOL_URL} | tar xvz
 	mv migrate.linux-amd64 $@

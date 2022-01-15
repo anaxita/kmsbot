@@ -5,3 +5,4 @@
 *.db
 migrate-cli
 Makefile
+*.exe
