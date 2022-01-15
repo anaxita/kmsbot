@@ -93,11 +93,12 @@ func (c *Core) commandController(update tgbotapi.Update) {
 func (c *Core) messageController(update tgbotapi.Update) {
 	var text = update.Message.Text
 	ip, isIp := isContainIP(text)
-	ipNet, isNet := isContainIpNet(text)
 
 	isAdminChat := c.isAdminChat(update.Message.Chat.ID)
 
 	if isAdminChat {
+		ipNet, isNet := isContainIpNet(text)
+
 		switch {
 		default:
 			log.Printf("[MESSAGE] %#v\n", update.Message.NewChatMembers)

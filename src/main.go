@@ -13,10 +13,6 @@ import (
 	"syscall"
 )
 
-type user struct {
-	Name int `json:"name"`
-}
-
 func main() {
 	shutdown := make(chan os.Signal)
 	signal.Notify(shutdown, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)

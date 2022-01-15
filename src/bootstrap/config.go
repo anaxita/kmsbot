@@ -36,7 +36,7 @@ type DB struct {
 func New() (*Config, error) {
 	config := new(Config)
 
-	f, err := os.ReadFile("config.yml")
+	f, err := os.ReadFile("./config.yml")
 	if err != nil {
 		return nil, err
 	}

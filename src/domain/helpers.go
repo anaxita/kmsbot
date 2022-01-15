@@ -5,7 +5,7 @@ import (
 	"kmsbot/service"
 	"log"
 	"net"
-	"strings"
+	"regexp"
 )
 
 func (c *Core) SendNotification(text string) {
@@ -32,31 +32,24 @@ func (c *Core) isAdminChat(chatID int64) bool {
 }
 
 func isContainIP(text string) (string, bool) {
-	split := strings.Split(text, " ")
-
-	for _, s := range split {
-		ip := net.ParseIP(s)
-		if ip != nil {
-			return ip.String(), true
-		}
+	regExp := regexp.MustCompile(`[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}`)
+	s := regExp.FindString(text)
+	ip := net.ParseIP(s)
+	if ip != nil {
+		return ip.String(), true
 	}
 
 	return "", false
 }
 
 func isContainIpNet(text string) (string, bool) {
-	split := strings.Split(text, " ")
-
-	for _, s := range split {
-		_, ipNetwork, err := net.ParseCIDR(s)
-		if err != nil {
-			continue
-		}
-
-		return ipNetwork.String(), true
+	regExp := regexp.MustCompile(`[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}`)
+	s := regExp.FindString(text)
+	_, ipNetwork, err := net.ParseCIDR(s)
+	if err != nil {
+		return "", false
 	}
-
-	return "", false
+	return ipNetwork.String(), true
 }
 
 var translitMap = map[string]string{
