@@ -2,9 +2,12 @@ package service
 
 import (
 	"errors"
-	"fmt"
+
 	"github.com/go-routeros/routeros"
 )
+
+var ErrIPNotFound = errors.New("IP is not found")
+var ErrIPAlreadyExists = errors.New("from RouterOS device: failure: already have such entry")
 
 type Mikrotik struct {
 	routerAddr     string
@@ -50,18 +53,19 @@ func (rc *Mikrotik) RemoveIP(ip string) error {
 	}
 	defer conn.Close()
 
-	findIP, err := conn.Run("/ip/firewall/address-list/print", fmt.Sprintf("address=%s", ip), ".proplist=.id")
+	findIP, err := conn.Run("/ip/firewall/address-list/print", "?address="+ip, "?list=WL")
 	if err != nil {
 		return err
 	}
 
-	if len(findIP.Re) <= 0 {
-		return errors.New("IP is not found")
+	l := len(findIP.Re)
+	if l == 0 || l > 1 {
+		return ErrIPNotFound
 	}
 
 	ipID, ok := findIP.Re[0].Map[".id"]
 	if !ok {
-		return errors.New("IP is not found")
+		return ErrIPNotFound
 	}
 
 	_, err = conn.Run("/ip/firewall/address-list/remove", "=.id="+ipID)
