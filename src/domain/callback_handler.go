@@ -87,7 +87,7 @@ func (c *Core) callbackAddIPHandler(callbackQuery *tgbotapi.CallbackQuery) {
 	}
 
 	err = c.mikrotik.AddIP(ipMessage.IP4(), Translit(comment))
-	if err != nil && errors.Is(err, service.ErrIPAlreadyExists) {
+	if err != nil && err.Error() == service.ErrIPAlreadyExists.Error() {
 		msg.Text = "Данный IP уже находится в белом списке."
 
 		return
