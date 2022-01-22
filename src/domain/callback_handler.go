@@ -84,6 +84,8 @@ func (c *Core) callbackAddIPHandler(callbackQuery *tgbotapi.CallbackQuery) {
 	err = c.mikrotik.RemoveIP(ipMessage.IP4())
 	if err != nil && errors.Is(err, service.ErrIPNotFound) {
 		msg.Text = "Ошибка добавления IP: " + err.Error()
+
+		return
 	}
 
 	err = c.mikrotik.AddIP(ipMessage.IP4(), Translit(comment))
