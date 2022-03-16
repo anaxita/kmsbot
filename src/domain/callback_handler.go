@@ -41,7 +41,6 @@ func (c *Core) callbackAddIPHandler(callbackQuery *tgbotapi.CallbackQuery) {
 	)
 
 	msg.ChatID = chatID
-	msg.Text = "IP успешно добавлен!"
 
 	callback := tgbotapi.NewCallback(callbackQuery.ID, callbackQuery.Data)
 	if _, err := c.bot.Request(callback); err != nil {
@@ -100,6 +99,8 @@ func (c *Core) callbackAddIPHandler(callbackQuery *tgbotapi.CallbackQuery) {
 
 		return
 	}
+
+	msg.Text = fmt.Sprintf("IP `%s` успешно добавлен!", ipMessage.IP4())
 
 	if chatTitle == "" {
 		chatTitle = "Личные сообщения"
