@@ -82,7 +82,7 @@ func (c *Core) callbackAddIPHandler(callbackQuery *tgbotapi.CallbackQuery) {
 	comment := fmt.Sprintf("BOT %s | %s %s", chatTitle, firstName, lastName)
 
 	err = c.mikrotik.RemoveIP(ipMessage.IP4())
-	if err != nil && errors.Is(err, service.ErrIPNotFound) {
+	if err != nil && !errors.Is(err, service.ErrIPNotFound) {
 		msg.Text = "Ошибка добавления IP: " + err.Error()
 
 		return
