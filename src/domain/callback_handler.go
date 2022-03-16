@@ -100,7 +100,7 @@ func (c *Core) callbackAddIPHandler(callbackQuery *tgbotapi.CallbackQuery) {
 		return
 	}
 
-	msg.ParseMode = tgbotapi.ModeMarkdownV2
+	msg.ParseMode = tgbotapi.ModeMarkdown
 	msg.Text = fmt.Sprintf("IP `%s` успешно добавлен!", ipMessage.IP4())
 
 	if chatTitle == "" {
