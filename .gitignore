@@ -1,4 +1,6 @@
 /.idea
+/vendor/*
+/src/vendor
 /logs
 /build
 *config.yml
