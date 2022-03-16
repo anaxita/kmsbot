@@ -1,9 +1,10 @@
 package domain
 
 import (
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"kmsbot/service"
 	"log"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 const (
@@ -102,10 +103,10 @@ func (c *Core) messageController(update tgbotapi.Update) {
 		switch {
 		default:
 			log.Printf("[MESSAGE] %#v\n", update.Message.NewChatMembers)
-		case isIp:
-			c.AskToAddIPMessageHandler(update, ip)
 		case isNet:
 			c.AskToAddIPMessageHandler(update, ipNet)
+		case isIp:
+			c.AskToAddIPMessageHandler(update, ip)
 		}
 
 		return
