@@ -130,15 +130,15 @@ func (c *Core) eventController(update tgbotapi.Update) {
 	}
 
 	if chat == nil &&
-		update.ChatMember.NewChatMember.Status == "member" &&
-		(update.ChatMember.From.UserName == "anaxita" ||
-			update.ChatMember.From.UserName == "Mishagl") {
+		update.MyChatMember.NewChatMember.Status == "member" &&
+		(update.MyChatMember.From.UserName == "anaxita" ||
+			update.MyChatMember.From.UserName == "Mishagl") {
 
 		log.Println("Чат не найден в БД")
 
 		chat = &service.Chat{
-			Title:  update.ChatMember.Chat.Title,
-			ChatID: update.ChatMember.Chat.ID,
+			Title:  update.MyChatMember.Chat.Title,
+			ChatID: update.MyChatMember.Chat.ID,
 			Role:   service.RoleClient,
 		}
 
@@ -156,7 +156,7 @@ func (c *Core) eventController(update tgbotapi.Update) {
 		log.Println("Чата нету в БД, обработка сообщений отключена")
 
 		msg := tgbotapi.LeaveChatConfig{
-			ChatID: update.ChatMember.Chat.ID,
+			ChatID: update.MyChatMember.Chat.ID,
 		}
 
 		log.Println("Покидаю данный чат")
