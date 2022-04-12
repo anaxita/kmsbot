@@ -80,6 +80,21 @@ func (c *Core) callbackAddIPHandler(callbackQuery *tgbotapi.CallbackQuery) {
 
 	comment := fmt.Sprintf("BOT %s | %s %s", chatTitle, firstName, lastName)
 
+	// Дублируем на 2й микрот
+	go func() {
+		err = c.mikrotik2.RemoveIP(ipMessage.IP4())
+		if err != nil && !errors.Is(err, service.ErrIPNotFound) {
+			log.Println("Ошибка удаления IP из ЦОД 2: ", err)
+
+			return
+		}
+
+		err = c.mikrotik2.AddIP(ipMessage.IP4(), Translit(comment))
+		if err != nil {
+			log.Println("Ошибка добавления на ЦОД 2: ", err)
+		}
+	}()
+
 	err = c.mikrotik.RemoveIP(ipMessage.IP4())
 	if err != nil && !errors.Is(err, service.ErrIPNotFound) {
 		msg.Text = "Ошибка добавления IP: " + err.Error()

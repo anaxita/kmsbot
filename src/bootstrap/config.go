@@ -1,15 +1,17 @@
 package bootstrap
 
 import (
-	"gopkg.in/yaml.v2"
 	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
-	Server Server `yaml:"server"`
-	Bot    Bot    `yaml:"bot"`
-	Router Router `yaml:"router"`
-	DB     DB     `yaml:"database"`
+	Server  Server `yaml:"server"`
+	Bot     Bot    `yaml:"bot"`
+	Router  Router `yaml:"router"`
+	Router2 Router `yaml:"router2"`
+	DB      DB     `yaml:"database"`
 }
 
 type Server struct {
