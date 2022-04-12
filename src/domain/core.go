@@ -6,13 +6,14 @@ import (
 )
 
 type Core struct {
-	bot      *service.Bot
-	store    *service.Store
-	mikrotik *service.Mikrotik
+	bot       *service.Bot
+	store     *service.Store
+	mikrotik  *service.Mikrotik
+	mikrotik2 *service.Mikrotik
 }
 
-func NewCore(bot *service.Bot, store *service.Store, mikrotik *service.Mikrotik) *Core {
-	return &Core{bot: bot, store: store, mikrotik: mikrotik}
+func NewCore(bot *service.Bot, store *service.Store, mikrotik *service.Mikrotik, mikrotik2 *service.Mikrotik) *Core {
+	return &Core{bot: bot, store: store, mikrotik: mikrotik, mikrotik2: mikrotik2}
 }
 
 func (c *Core) Start() {

@@ -32,12 +32,17 @@ func main() {
 		log.Fatalln("mikrotik service", err)
 	}
 
+	mikrotikService2, err := service.NewMikrotik(config.Router2.Addr, config.Router2.User, config.Router2.Password)
+	if err != nil {
+		log.Fatalln("mikrotik service", err)
+	}
+
 	storeService, err := service.NewStore(config.DB.Name, config.DB.User, config.DB.Password)
 	if err != nil {
 		log.Fatalln("store service", err)
 	}
 
-	core := domain.NewCore(botService, storeService, mikrotikService)
+	core := domain.NewCore(botService, storeService, mikrotikService, mikrotikService2)
 	go core.Start()
 
 	srv := rest.NewServer(config.Server.Port, core)
