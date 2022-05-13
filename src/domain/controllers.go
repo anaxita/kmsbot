@@ -31,6 +31,13 @@ const (
 )
 
 func (c *Core) callbackController(callbackQuery *tgbotapi.CallbackQuery) {
+	defer func() {
+		err := recover()
+		if err != nil {
+			log.Println("recovered: ", err)
+		}
+	}()
+
 	var data = callbackQuery.Data
 	isAdminChat := c.isAdminChat(callbackQuery.Message.Chat.ID)
 
@@ -68,6 +75,13 @@ func (c *Core) callbackController(callbackQuery *tgbotapi.CallbackQuery) {
 }
 
 func (c *Core) commandController(update tgbotapi.Update) {
+	defer func() {
+		err := recover()
+		if err != nil {
+			log.Println("recovered: ", err)
+		}
+	}()
+
 	var command = update.Message.Command()
 
 	isAdminChat := c.isAdminChat(update.Message.Chat.ID)
@@ -92,6 +106,13 @@ func (c *Core) commandController(update tgbotapi.Update) {
 }
 
 func (c *Core) messageController(update tgbotapi.Update) {
+	defer func() {
+		err := recover()
+		if err != nil {
+			log.Println("recovered: ", err)
+		}
+	}()
+
 	var text = update.Message.Text
 	ip, isIp := isContainIP(text)
 
@@ -123,6 +144,13 @@ func (c *Core) messageController(update tgbotapi.Update) {
 }
 
 func (c *Core) eventController(update tgbotapi.Update) {
+	defer func() {
+		err := recover()
+		if err != nil {
+			log.Println("recovered: ", err)
+		}
+	}()
+
 	chat, err := c.store.ChatByChatID(update.MyChatMember.Chat.ID)
 	if err != nil {
 		log.Println("Ошибка запроса чата из БД", err)
