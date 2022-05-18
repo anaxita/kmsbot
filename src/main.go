@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"io"
 	"kmsbot/bootstrap"
 	"kmsbot/domain"
 	"kmsbot/rest"
@@ -11,10 +12,20 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 func main() {
-	shutdown := make(chan os.Signal)
+	f, err := os.Create("./logs/" + time.Now().Format("02-01-2006-15-04-05"+".log"))
+	if err != nil {
+		log.Fatalln("create logfile", err)
+	}
+
+	defer f.Close()
+
+	log.SetOutput(io.MultiWriter(f, os.Stdout))
+
+	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	config, err := bootstrap.New()

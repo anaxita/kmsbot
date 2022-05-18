@@ -1,7 +1,9 @@
 /.idea
 /vendor/*
 /src/vendor
-/logs
+logs
+src/logs
+*.log
 /build
 *config.yml
 *.db

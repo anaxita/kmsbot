@@ -40,7 +40,7 @@ func (c *Core) Start() {
 		}
 
 		if update.Message.Chat.Type == "private" {
-			return
+			continue
 		}
 
 		if update.Message.IsCommand() {
