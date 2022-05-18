@@ -122,8 +122,6 @@ func (c *Core) messageController(update tgbotapi.Update) {
 		ipNet, isNet := isContainIpNet(text)
 
 		switch {
-		default:
-			log.Printf("[MESSAGE] %#v\n", update.Message.NewChatMembers)
 		case isNet:
 			c.AskToAddIPMessageHandler(update, ipNet)
 		case isIp:
@@ -134,8 +132,6 @@ func (c *Core) messageController(update tgbotapi.Update) {
 	}
 
 	switch {
-	default:
-		log.Printf("[MESSAGE] %s", update.Message.Text)
 	case len(update.Message.NewChatMembers) > 0:
 		c.SendGreetingMessageHandler(update)
 	case isIp:
