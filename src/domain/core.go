@@ -3,6 +3,8 @@ package domain
 import (
 	"kmsbot/service"
 	"log"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 type Core struct {
@@ -39,7 +41,12 @@ func (c *Core) Start() {
 			continue
 		}
 
-		if update.Message.Chat.Type == "private" {
+		if update.Message.Chat.IsPrivate() {
+			_, err := c.bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID,
+				"Извините, я не отвечаю в личные сообщение. Напишите в общий чат."))
+			if err != nil {
+				log.Println("send private message: ", err)
+			}
 			continue
 		}
 
