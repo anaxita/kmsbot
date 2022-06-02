@@ -2,9 +2,10 @@ package service
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/gocraft/dbr"
 	_ "github.com/mattn/go-sqlite3"
-	"time"
 )
 
 const (
@@ -18,8 +19,8 @@ type Message interface {
 }
 
 type Store struct {
-	db       *dbr.Connection
-	Messages map[int]Message
+	db    *dbr.Connection
+	Cache map[int]Message
 }
 
 type IPMessage struct {
@@ -53,7 +54,8 @@ type Chat struct {
 }
 
 func NewStore(dbname, user, password string) (*Store, error) {
-	conn, err := dbr.Open("sqlite3", fmt.Sprintf("file:%s.db?_loc=auto&_auth&_auth_user=%s&_auth_pass=%s&_auth_crypt=sha512", dbname, user, password), nil)
+	conn, err := dbr.Open("sqlite3",
+		fmt.Sprintf("file:%s.db?_loc=auto&_auth&_auth_user=%s&_auth_pass=%s&_auth_crypt=sha512", dbname, user, password), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +68,7 @@ func NewStore(dbname, user, password string) (*Store, error) {
 	conn.SetMaxOpenConns(10)
 	conn.SetMaxIdleConns(10)
 
-	return &Store{db: conn, Messages: make(map[int]Message)}, nil
+	return &Store{db: conn, Cache: make(map[int]Message)}, nil
 }
 
 func (s *Store) CreateUser(u User) (int64, error) {

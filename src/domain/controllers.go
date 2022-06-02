@@ -82,6 +82,11 @@ func (c *Core) commandController(update tgbotapi.Update) {
 		}
 	}()
 
+	if update.Message.Chat.IsPrivate() {
+		_, _ = c.bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Извините, я не отвечаю в личные сообщение. Напишите в общий чат."))
+		return
+	}
+
 	var command = update.Message.Command()
 
 	isAdminChat := c.isAdminChat(update.Message.Chat.ID)
@@ -112,6 +117,11 @@ func (c *Core) messageController(update tgbotapi.Update) {
 			log.Println("recovered: ", err)
 		}
 	}()
+
+	if update.Message.Chat.IsPrivate() {
+		_, _ = c.bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Извините, я не отвечаю в личные сообщение. Напишите в общий чат."))
+		return
+	}
 
 	var text = update.Message.Text
 	ip, isIp := isContainIP(text)
@@ -156,7 +166,8 @@ func (c *Core) eventController(update tgbotapi.Update) {
 	if chat == nil &&
 		update.MyChatMember.NewChatMember.Status == "member" &&
 		(update.MyChatMember.From.UserName == "anaxita" ||
-			update.MyChatMember.From.UserName == "Mishagl") {
+			update.MyChatMember.From.UserName == "Mishagl" ||
+			update.MyChatMember.From.UserName == "KM_SYSTEM") {
 
 		log.Println("Чат не найден в БД")
 

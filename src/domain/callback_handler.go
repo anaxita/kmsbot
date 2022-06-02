@@ -66,10 +66,10 @@ func (c *Core) callbackAddIPHandler(callbackQuery *tgbotapi.CallbackQuery) {
 			log.Println("[ERROR] send a message: ", err)
 		}
 
-		delete(c.store.Messages, msgID)
+		delete(c.store.Cache, msgID)
 	}(&msg)
 
-	ipMessage, ok := c.store.Messages[msgID]
+	ipMessage, ok := c.store.Cache[msgID]
 	if !ok {
 		msg.Text = "Время истекло, введите заново IP"
 
@@ -203,5 +203,5 @@ func (c *Core) callbackDeclineAddIPHandler(callbackQuery *tgbotapi.CallbackQuery
 		log.Println("[ERROR] send a message: ", err)
 	}
 
-	delete(c.store.Messages, msg.MessageID)
+	delete(c.store.Cache, msg.MessageID)
 }

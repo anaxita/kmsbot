@@ -2,9 +2,10 @@ package domain
 
 import (
 	"fmt"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"kmsbot/service"
 	"log"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func (c *Core) AskToAddIPMessageHandler(update tgbotapi.Update, ip string) {
@@ -21,7 +22,7 @@ func (c *Core) AskToAddIPMessageHandler(update tgbotapi.Update, ip string) {
 		log.Println("[ERROR] send a message: ", err)
 	}
 
-	c.store.Messages[resp.MessageID] = &service.IPMessage{IP: ip, MsgID: update.Message.MessageID}
+	c.store.Cache[resp.MessageID] = &service.IPMessage{IP: ip, MsgID: update.Message.MessageID}
 
 }
 
