@@ -1,5 +1,5 @@
 build-prod:
-	GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -H windowsgui" -o kmsbot.exe .
+	cd src && GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -H windowsgui" -o kmsbot.exe .
 
 migrate-new: migrate-cli
 	./migrate-cli create -ext sql -dir migrations "$(name)"
