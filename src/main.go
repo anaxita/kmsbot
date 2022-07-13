@@ -40,12 +40,12 @@ func main() {
 
 	mikrotikService, err := service.NewMikrotik(config.Router.Addr, config.Router.User, config.Router.Password)
 	if err != nil {
-		log.Fatalln("mikrotik service", err)
+		log.Fatalln("mikrotik service "+config.Router.Addr, err)
 	}
 
 	mikrotikService2, err := service.NewMikrotik(config.Router2.Addr, config.Router2.User, config.Router2.Password)
 	if err != nil {
-		log.Fatalln("mikrotik service", err)
+		log.Fatalln("mikrotik service "+config.Router2.Addr, err)
 	}
 
 	storeService, err := service.NewStore(config.DB.Name, config.DB.User, config.DB.Password)
